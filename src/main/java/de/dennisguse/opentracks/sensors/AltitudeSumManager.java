@@ -75,29 +75,29 @@ public class AltitudeSumManager implements SensorEventListener {
     }
 
     @VisibleForTesting
-    public void setAltitudeGain_m(float altitudeGainMetres) {
+    public void setAltitudeGainMetres(float altitudeGainMetres) {
         this.altitudeGainMetres = altitudeGainMetres;
     }
 
     @VisibleForTesting
-    public void addAltitudeGain_m(float altitudeGainMetres) {
+    public void addAltitudeGainMetres(float altitudeGainMetres) {
         this.altitudeGainMetres = this.altitudeGainMetres == null ? 0f : this.altitudeGainMetres;
         this.altitudeGainMetres += altitudeGainMetres;
     }
 
     @VisibleForTesting
-    public void addAltitudeLoss_m(Float altitudeLossMetres) {
+    public void addAltitudeLossMetres(Float altitudeLossMetres) {
         this.altitudeLossMetres = this.altitudeLossMetres == null ? 0f : this.altitudeLossMetres;
         this.altitudeLossMetres += altitudeLossMetres;
     }
 
     @Nullable
-    public Float getAltitudeLoss_m() {
+    public Float getAltitudeLossMetres() {
         return isConnected ? altitudeLossMetres : null;
     }
 
     @VisibleForTesting
-    public void setAltitudeLoss_m(float altitudeLossMetres) {
+    public void setAltitudeLossMetres(float altitudeLossMetres) {
         this.altitudeLossMetres = altitudeLossMetres;
     }
 
@@ -137,7 +137,7 @@ public class AltitudeSumManager implements SensorEventListener {
         if (altitudeChange != null) {
             altitudeGainMetres += altitudeChange.getAltitudeGain_m();
 
-            altitudeLossMetres += altitudeChange.getAltitudeLoss_m();
+            altitudeLossMetres += altitudeChange.getAltitudeLossMetres();
 
             lastAcceptedPressureValueHpa = altitudeChange.getCurrentSensorValue_hPa();
         }

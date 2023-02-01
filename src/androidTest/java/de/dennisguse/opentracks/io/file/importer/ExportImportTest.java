@@ -69,10 +69,13 @@ import de.dennisguse.opentracks.services.handlers.TrackPointCreator;
 import de.dennisguse.opentracks.stats.TrackStatistics;
 
 /**
- * Export a track to {@link TrackFileFormat} and verify that the import is identical.
+ * Export a track to {@link TrackFileFormat} and verify that the import is
+ * identical.
  * <p>
- * Note: those tests are affected by {@link de.dennisguse.opentracks.sensors.sensorData.SensorData}.isRecent().
- * If the test device is too slow (like in a CI) these are likely to fail as the sensor data will be omitted from actual.
+ * Note: those tests are affected by
+ * {@link de.dennisguse.opentracks.sensors.sensorData.SensorData}.isRecent().
+ * If the test device is too slow (like in a CI) these are likely to fail as the
+ * sensor data will be omitted from actual.
  */
 @RunWith(AndroidJUnit4.class)
 public class ExportImportTest {
@@ -82,14 +85,15 @@ public class ExportImportTest {
     @Rule
     public final ServiceTestRule mServiceRule = ServiceTestRule.withTimeout(5, TimeUnit.SECONDS);
 
-    //For csv_export_only() as we the timezone is hardcoded in the expectation.
+    // For csv_export_only() as we the timezone is hardcoded in the expectation.
     @Rule
     public TimezoneRule timezoneRule = new TimezoneRule(TimeZone.getTimeZone("Europe/Berlin"));
 
     @BeforeClass
     public static void preSetUp() {
         // Prepare looper for Android's message queue
-        if (Looper.myLooper() == null) Looper.prepare();
+        if (Looper.myLooper() == null)
+            Looper.prepare();
     }
 
     private final Context context = ApplicationProvider.getApplicationContext();
@@ -135,7 +139,8 @@ public class ExportImportTest {
     }
 
     public void setUp() throws TimeoutException {
-        TrackRecordingService service = ((TrackRecordingService.Binder) mServiceRule.bindService(new Intent(context, TrackRecordingService.class)))
+        TrackRecordingService service = ((TrackRecordingService.Binder) mServiceRule
+                .bindService(new Intent(context, TrackRecordingService.class)))
                 .getService();
 
         TrackPointCreator trackPointCreator = service.getTrackPointCreator();
@@ -159,7 +164,8 @@ public class ExportImportTest {
         mockBLESensorData(trackPointCreator, null, null, 68f, 3f, 50f);
 
         trackPointCreator.setClock("2020-02-02T02:02:16Z");
-        mockBLESensorData(trackPointCreator, 5f, Distance.of(2), 69f, 3f, 50f); // Distance will be added to next TrackPoint
+        mockBLESensorData(trackPointCreator, 5f, Distance.of(2), 69f, 3f, 50f); // Distance will be added to next
+                                                                                // TrackPoint
 
         sendLocation(trackPointCreator, "2020-02-02T02:02:17Z", 3, 14.001, 10, 13, 15, 10, 0);
         service.insertMarker("Marker 2", "Marker 2 category", "Marker 2 desc", null);
@@ -195,7 +201,7 @@ public class ExportImportTest {
         assertEquals(2, markers.size());
     }
 
-    //TODO Does not test images
+    // TODO Does not test images
     @LargeTest
     @Test
     public void kmz_with_trackdetail_and_sensordata() throws TimeoutException, IOException {
@@ -266,10 +272,12 @@ public class ExportImportTest {
         assertEquals(originalTrackStatistics.getMaxAltitude(), importedTrackStatistics.getMaxAltitude(), 0.01);
         assertEquals(10, importedTrackStatistics.getMaxAltitude(), 0.01);
 
-        assertEquals(originalTrackStatistics.getTotalAltitudeGain(), importedTrackStatistics.getTotalAltitudeGain(), 0.01);
+        assertEquals(originalTrackStatistics.getTotalAltitudeGain(), importedTrackStatistics.getTotalAltitudeGain(),
+                0.01);
         assertEquals(2, importedTrackStatistics.getTotalAltitudeGain(), 0.01);
 
-        assertEquals(originalTrackStatistics.getTotalAltitudeLoss(), importedTrackStatistics.getTotalAltitudeLoss(), 0.01);
+        assertEquals(originalTrackStatistics.getTotalAltitudeLoss(), importedTrackStatistics.getTotalAltitudeLoss(),
+                0.01);
         assertEquals(2, importedTrackStatistics.getTotalAltitudeLoss(), 0.01);
 
         // 4. markers
@@ -330,8 +338,9 @@ public class ExportImportTest {
         assertEquals(track.getDescription(), importedTrack.getDescription());
         assertEquals(track.getName(), importedTrack.getName());
 
-        //TODO exporting and importing a track icon is not yet supported by GpxTrackWriter.
-        //assertEquals(track.getIcon(), importedTrack.getIcon());
+        // TODO exporting and importing a track icon is not yet supported by
+        // GpxTrackWriter.
+        // assertEquals(track.getIcon(), importedTrack.getIcon());
 
         // 2. trackpoints
         // The GPX exporter does not support exporting TrackPoints without lat/lng.
@@ -384,8 +393,8 @@ public class ExportImportTest {
                         .setAltitudeLoss(0f)
                         .setAltitudeGain(0f)
                         .setSpeed(Speed.of(15))
-                        .setHorizontalAccuracy(Distance.of(10))
-        ), actual);
+                        .setHorizontalAccuracy(Distance.of(10))),
+                actual);
 
         // 3. trackstatistics
         TrackStatistics trackStatistics = track.getTrackStatistics();
@@ -461,11 +470,11 @@ public class ExportImportTest {
         contentProviderUtils.deleteTrack(context, trackId);
 
         // then
-        InputStream expected = InstrumentationRegistry.getInstrumentation().getContext().getResources().openRawResource(de.dennisguse.opentracks.test.R.raw.csv_export);
+        InputStream expected = InstrumentationRegistry.getInstrumentation().getContext().getResources()
+                .openRawResource(de.dennisguse.opentracks.test.R.raw.csv_export);
         String expectedText = new BufferedReader(new InputStreamReader(expected, StandardCharsets.UTF_8))
                 .lines()
                 .collect(Collectors.joining("\n"));
-
 
         InputStream actual = context.getContentResolver().openInputStream(tmpFileUri);
         String actualText = new BufferedReader(new InputStreamReader(actual, StandardCharsets.UTF_8))
@@ -494,7 +503,8 @@ public class ExportImportTest {
         }
     }
 
-    private void mockBLESensorData(TrackPointCreator trackPointCreator, Float speed, Distance distance, float heartRate, float cadence, Float power) {
+    private void mockBLESensorData(TrackPointCreator trackPointCreator, Float speed, Distance distance, float heartRate,
+            float cadence, Float power) {
         BluetoothRemoteSensorManager remoteSensorManager = Mockito.mock(BluetoothRemoteSensorManager.class);
         Mockito.when(remoteSensorManager.fill(Mockito.any())).thenAnswer(invocation -> {
             TrackPoint trackPoint = invocation.getArgument(0);
@@ -509,7 +519,8 @@ public class ExportImportTest {
             sensorDataSet.set(cyclingCadence);
 
             if (distance != null && speed != null) {
-                SensorDataCyclingDistanceSpeed.Data distanceSpeedData = Mockito.mock(SensorDataCyclingDistanceSpeed.Data.class);
+                SensorDataCyclingDistanceSpeed.Data distanceSpeedData = Mockito
+                        .mock(SensorDataCyclingDistanceSpeed.Data.class);
                 Mockito.when(distanceSpeedData.getDistanceOverall()).thenReturn(distance);
                 Mockito.when(distanceSpeedData.getSpeed()).thenReturn(Speed.of(speed));
                 SensorDataCyclingDistanceSpeed distanceSpeed = Mockito.mock(SensorDataCyclingDistanceSpeed.class);
@@ -527,11 +538,12 @@ public class ExportImportTest {
 
     private void mockAltitudeChange(TrackPointCreator trackPointCreator, float altitudeGain) {
         AltitudeSumManager altitudeSumManager = trackPointCreator.getAltitudeSumManager();
-        altitudeSumManager.setAltitudeGain_m(altitudeGain);
-        altitudeSumManager.setAltitudeLoss_m(altitudeGain);
+        altitudeSumManager.setAltitudeGainMetres(altitudeGain);
+        altitudeSumManager.setAltitudeLossMetres(altitudeGain);
     }
 
-    private void sendLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude, float accuracy, float verticalAccuracy, float speed, float altitude, float altitudeGain) {
+    private void sendLocation(TrackPointCreator trackPointCreator, String time, double latitude, double longitude,
+            float accuracy, float verticalAccuracy, float speed, float altitude, float altitudeGain) {
         Location location = new Location("mock");
         location.setLatitude(latitude);
         location.setLongitude(longitude);

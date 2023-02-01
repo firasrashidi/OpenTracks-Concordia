@@ -6,7 +6,7 @@ import androidx.annotation.VisibleForTesting;
 
 public class PressureSensorUtils {
 
-    //Everything above is considered a meaningful change in altitude.
+    // Everything above is considered a meaningful change in altitude.
     private static final float ALTITUDE_CHANGE_DIFF_M = 3.0f;
 
     private static final float EXPONENTIAL_SMOOTHING = 0.3f;
@@ -39,7 +39,7 @@ public class PressureSensorUtils {
             return altitudeChange_m > 0 ? altitudeChange_m : 0;
         }
 
-        public float getAltitudeLoss_m() {
+        public float getAltitudeLossMetres() {
             return altitudeChange_m < 0 ? -1 * altitudeChange_m : 0;
         }
     }
@@ -47,8 +47,10 @@ public class PressureSensorUtils {
     /**
      * Applies exponential smoothing to sensor value before computation.
      */
-    public static AltitudeChange computeChangesWithSmoothing_m(float lastAcceptedSensorValue_hPa, float lastSeenSensorValue_hPa, float currentSensorValue_hPa) {
-        float nextSensorValue_hPa = EXPONENTIAL_SMOOTHING * currentSensorValue_hPa + (1 - EXPONENTIAL_SMOOTHING) * lastSeenSensorValue_hPa;
+    public static AltitudeChange computeChangesWithSmoothing_m(float lastAcceptedSensorValue_hPa,
+            float lastSeenSensorValue_hPa, float currentSensorValue_hPa) {
+        float nextSensorValue_hPa = EXPONENTIAL_SMOOTHING * currentSensorValue_hPa
+                + (1 - EXPONENTIAL_SMOOTHING) * lastSeenSensorValue_hPa;
 
         return computeChanges(lastAcceptedSensorValue_hPa, nextSensorValue_hPa);
     }
@@ -63,19 +65,25 @@ public class PressureSensorUtils {
             return null;
         }
 
-        // Limit altitudeC change by ALTITUDE_CHANGE_DIFF and computes pressure value accordingly.
+        // Limit altitudeC change by ALTITUDE_CHANGE_DIFF and computes pressure value
+        // accordingly.
         AltitudeChange altitudeChange = new AltitudeChange(currentSensorValue_hPa, altitudeChange_m);
         if (altitudeChange.getAltitudeChange_m() > 0) {
-            return new AltitudeChange(getBarometricPressure(lastSensorValue_m + ALTITUDE_CHANGE_DIFF_M), ALTITUDE_CHANGE_DIFF_M);
+            return new AltitudeChange(getBarometricPressure(lastSensorValue_m + ALTITUDE_CHANGE_DIFF_M),
+                    ALTITUDE_CHANGE_DIFF_M);
         } else {
-            return new AltitudeChange(getBarometricPressure(lastSensorValue_m - ALTITUDE_CHANGE_DIFF_M), -1 * ALTITUDE_CHANGE_DIFF_M);
+            return new AltitudeChange(getBarometricPressure(lastSensorValue_m - ALTITUDE_CHANGE_DIFF_M),
+                    -1 * ALTITUDE_CHANGE_DIFF_M);
         }
     }
 
     /*
-     * Barometeric pressure to altitude estimation; inverts of SensorManager.getAltitude(float, float)
-     * https://de.wikipedia.org/wiki/Barometrische_H%C3%B6henformel#Internationale_H%C3%B6henformel
-     * {\color{White} p(h)} = p_0 \cdot \left( 1 - \frac{0{,}0065 \frac{\mathrm K}{\mathrm m} \cdot h}{T_0\ } \right)^{5{,}255}
+     * Barometeric pressure to altitude estimation; inverts of
+     * SensorManager.getAltitude(float, float)
+     * https://de.wikipedia.org/wiki/Barometrische_H%C3%B6henformel#Internationale_H
+     * %C3%B6henformel
+     * {\color{White} p(h)} = p_0 \cdot \left( 1 - \frac{0{,}0065 \frac{\mathrm
+     * K}{\mathrm m} \cdot h}{T_0\ } \right)^{5{,}255}
      */
     @VisibleForTesting
     public static float getBarometricPressure(float altitude_m) {

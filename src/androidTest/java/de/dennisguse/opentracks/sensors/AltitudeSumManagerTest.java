@@ -28,11 +28,12 @@ public class AltitudeSumManagerTest {
         subject.setConnected(true);
 
         // then
-        addSensorValue(subject, new float[]{1015f, 1015.01f, 1015.02f, 1015.03f, 1015.04f, 1015.05f, 1015.06f, 1015.07f, 1015.08f, 1015.09f, 1015.10f, 1015.11f, 1015.12f, 1015.13f, 1015.14f, 1015.15f});
+        addSensorValue(subject, new float[] { 1015f, 1015.01f, 1015.02f, 1015.03f, 1015.04f, 1015.05f, 1015.06f,
+                1015.07f, 1015.08f, 1015.09f, 1015.10f, 1015.11f, 1015.12f, 1015.13f, 1015.14f, 1015.15f });
 
         // then
         Assert.assertEquals(0f, subject.getAltitudeGain_m(), 0.01);
-        Assert.assertEquals(48.0, subject.getAltitudeLoss_m(), 0.01);
+        Assert.assertEquals(48.0, subject.getAltitudeLossMetres(), 0.01);
     }
 
     @Test
@@ -45,6 +46,6 @@ public class AltitudeSumManagerTest {
 
         // then
         Assert.assertNull(subject.getAltitudeGain_m());
-        Assert.assertNull(subject.getAltitudeLoss_m());
+        Assert.assertNull(subject.getAltitudeLossMetres());
     }
 }
